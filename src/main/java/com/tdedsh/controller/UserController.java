@@ -4,22 +4,25 @@ import io.javalin.http.Context;
 
 public class UserController {
     public static void getAll(Context ctx) {
-        ctx.result("Get All ok");
-    }
-
-    public static void create(Context ctx) {
-        ctx.result("Create is ok");
+        ctx.result("Get all users");
     }
 
     public static void getOne(Context ctx) {
-        ctx.result("getOne is ok");
+        String userId = ctx.pathParam("userId");
+        ctx.result("Get user with ID: " + userId);
+    }
+
+    public static void create(Context ctx) {
+        ctx.result("Create a user");
     }
 
     public static void update(Context ctx) {
-        ctx.result("update is ok");
+        String userId = ctx.pathParam("userId");
+        ctx.result("Update user with ID: " + userId);
     }
 
     public static void delete(Context ctx) {
-        ctx.result("delete is ok");
+        String userId = ctx.pathParam("userId");
+        ctx.result("Delete user with ID: " + userId);
     }
 }
