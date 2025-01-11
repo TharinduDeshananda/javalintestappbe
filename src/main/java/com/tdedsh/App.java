@@ -2,12 +2,12 @@ package com.tdedsh;
 
 import com.tdedsh.controller.AuthController;
 import com.tdedsh.controller.TaskController;
+import com.tdedsh.controller.UserController;
 import com.tdedsh.util.AuthMiddleware;
 import io.javalin.Javalin;
-import static io.javalin.apibuilder.ApiBuilder.*;
-import com.tdedsh.controller.UserController;
-import io.javalin.apibuilder.ApiBuilder;
 import org.jooq.DSLContext;
+
+import static io.javalin.apibuilder.ApiBuilder.before;
 
 public class App {
     public static void main(String[] args) {

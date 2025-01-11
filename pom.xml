@@ -159,7 +159,7 @@
                             <name>org.jooq.meta.mysql.MySQLDatabase</name>
                             <inputSchema>taskdb</inputSchema>
                             <includes>.*</includes>
-                            <excludes></excludes>
+
                         </database>
                         <target>
                             <packageName>com.tdedsh.generated</packageName>

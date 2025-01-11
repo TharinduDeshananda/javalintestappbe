@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 public class AuthMiddleware implements Handler {
     private static final Logger log = LoggerFactory.getLogger(AuthMiddleware.class);
     @Override
-    public void handle(Context ctx) throws Exception {
+    public void handle(Context ctx) {
         log.info("Authmiddleware check");
         String token = ctx.cookie("jwt");
 
