@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS tasks (
     user_id INT NOT NULL,                    -- ID of the user who owns the task
     title VARCHAR(100) NOT NULL,             -- Title of the task
     description TEXT,                        -- Description of the task
+    background_color VARCHAR(10)             -- background color of task
+    text_color VARCHAR(10)                   -- text color of task
     status ENUM('TODO', 'IN_PROGRESS', 'DONE') DEFAULT 'TODO', -- Task status
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp of task creation
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Timestamp of last update

@@ -17,13 +17,13 @@ import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function7;
+import org.jooq.Function9;
 import org.jooq.Identity;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row7;
+import org.jooq.Row9;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -75,6 +75,16 @@ public class Tasks extends TableImpl<TasksRecord> {
      * The column <code>taskdb.tasks.description</code>.
      */
     public final TableField<TasksRecord, String> DESCRIPTION = createField(DSL.name("description"), SQLDataType.CLOB, this, "");
+
+    /**
+     * The column <code>taskdb.tasks.background_color</code>.
+     */
+    public final TableField<TasksRecord, String> BACKGROUND_COLOR = createField(DSL.name("background_color"), SQLDataType.VARCHAR(10), this, "");
+
+    /**
+     * The column <code>taskdb.tasks.text_color</code>.
+     */
+    public final TableField<TasksRecord, String> TEXT_COLOR = createField(DSL.name("text_color"), SQLDataType.VARCHAR(10), this, "");
 
     /**
      * The column <code>taskdb.tasks.status</code>.
@@ -201,18 +211,18 @@ public class Tasks extends TableImpl<TasksRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row7 type methods
+    // Row9 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row7<Integer, Integer, String, String, TasksStatus, LocalDateTime, LocalDateTime> fieldsRow() {
-        return (Row7) super.fieldsRow();
+    public Row9<Integer, Integer, String, String, String, String, TasksStatus, LocalDateTime, LocalDateTime> fieldsRow() {
+        return (Row9) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function7<? super Integer, ? super Integer, ? super String, ? super String, ? super TasksStatus, ? super LocalDateTime, ? super LocalDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function9<? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? super String, ? super TasksStatus, ? super LocalDateTime, ? super LocalDateTime, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -220,7 +230,7 @@ public class Tasks extends TableImpl<TasksRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function7<? super Integer, ? super Integer, ? super String, ? super String, ? super TasksStatus, ? super LocalDateTime, ? super LocalDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function9<? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? super String, ? super TasksStatus, ? super LocalDateTime, ? super LocalDateTime, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }
