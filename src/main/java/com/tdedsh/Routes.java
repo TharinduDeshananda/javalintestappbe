@@ -1,5 +1,6 @@
 package com.tdedsh;
 
+import com.tdedsh.controller.AuthController;
 import com.tdedsh.controller.TaskController;
 import com.tdedsh.controller.UserController;
 import static io.javalin.apibuilder.ApiBuilder.*;
@@ -33,4 +34,13 @@ public class Routes {
             });
         };
     }
+    public static EndpointGroup authRoutes() {
+        return () -> {
+            path("/auth", () -> {
+                post("/login", AuthController::loginUser);
+                post("/logout",AuthController::logoutUser);
+            });
+        };
+    }
+
 }

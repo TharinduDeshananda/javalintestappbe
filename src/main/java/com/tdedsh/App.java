@@ -1,6 +1,8 @@
 package com.tdedsh;
 
+import com.tdedsh.controller.AuthController;
 import com.tdedsh.controller.TaskController;
+import com.tdedsh.util.AuthMiddleware;
 import io.javalin.Javalin;
 import static io.javalin.apibuilder.ApiBuilder.*;
 import com.tdedsh.controller.UserController;
@@ -16,21 +18,33 @@ public class App {
         // Inject the DSLContext into controllers
         UserController.setDb(db);
         TaskController.setDb(db);
-
+        AuthController.setDb(db);
         var app = Javalin.create(config -> {
             config.useVirtualThreads = true;
             config.http.asyncTimeout = 10_000L;
             // Configure routes using apiBuilder
             config.router.apiBuilder(App::addRoutes);
-        }).start(8080);
+        });
 
+        app.start(8080);
     }
 
     private static void addRoutes() {
+
+        var authMiddleware = new AuthMiddleware();
+        before("/tasks",authMiddleware);
+        before("/users",authMiddleware);
+
         // Add user routes
         var userRoutes = Routes.userRoutes();
         var taskRoutes  = Routes.taskRoutes();
+        var authRoutes = Routes.authRoutes();
+
+
+        authRoutes.addEndpoints();
         userRoutes.addEndpoints();
         taskRoutes.addEndpoints();
+
+
     }
 }
