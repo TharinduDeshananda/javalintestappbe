@@ -1,3 +1,13 @@
+# Function to compile the project
+function Compile-Project {
+    Write-Host "Compiling the project..."
+    mvn compile
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Compilation failed. Exiting..."
+        exit 1
+    }
+}
+
 # Function to start the Java app
 function Start-JavaApp {
     Write-Host "Running Javalin app..."
@@ -23,6 +33,11 @@ function Stop-JavaApp {
 
 # Main script logic
 Write-Host "Press 'r' to restart or 'p' to quit..."
+
+# Compile the project before running
+Compile-Project
+
+# Start the Java app
 Start-JavaApp
 
 while ($true) {
@@ -31,6 +46,7 @@ while ($true) {
         if ($key -eq 'r') {
             Stop-JavaApp
             Write-Host "Restarting Javalin app..."
+            Compile-Project
             Start-JavaApp
         } elseif ($key -eq 'p') {
             Stop-JavaApp

@@ -14,7 +14,6 @@ import static io.javalin.apibuilder.ApiBuilder.before;
 public class App {
     private static final Logger log = LoggerFactory.getLogger(App.class);
     public static void main(String[] args) {
-
         // Initialize the database connection
         DSLContext db = DatabaseConfig.create();
 
@@ -29,7 +28,7 @@ public class App {
             config.router.apiBuilder(App::addRoutes);
         });
 
-        log.info("Starting server");
+        log.info("Starting server in 8080");
         app.start(8080);
     }
 

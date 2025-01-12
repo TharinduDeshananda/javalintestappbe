@@ -2,15 +2,20 @@ package com.tdedsh.controller;
 
 import com.tdedsh.dto.CustomResponse;
 import com.tdedsh.dto.LoginDto;
+import com.tdedsh.dto.UserDto;
+import com.tdedsh.dto.mapper.UserMapper;
 import com.tdedsh.generated.tables.records.UsersRecord;
 import com.tdedsh.util.TokenUtil;
 import io.javalin.http.Context;
 import io.javalin.http.Cookie;
 import org.jooq.DSLContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.tdedsh.generated.tables.Users.USERS;
 
 public class AuthController {
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private static DSLContext db; // Assume this is initialized elsewhere (e.g., in a DatabaseConfig class)
     // Inject the DSLContext (dependency injection)
     public static void setDb(DSLContext db) {
@@ -32,7 +37,17 @@ public class AuthController {
 
     public static void logoutUser(Context ctx){
         ctx.removeCookie("jwt");
-        ctx.status(200).json("Logged out");
+        ctx.status(200).json(new CustomResponse(200,null,"Logged out"));
+    }
+
+    public static void create(Context ctx) {
+        log.info("Auth user create start");
+        var user = ctx.bodyAsClass(UserDto.class);
+        UsersRecord usersRecord = UserMapper.toUsersRecord(user);
+        db.insertInto(USERS)
+                .set(usersRecord)
+                .execute();
+        ctx.status(200).json(new CustomResponse(200,null,"User account created"));
     }
 
 }

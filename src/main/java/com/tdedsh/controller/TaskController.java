@@ -1,5 +1,6 @@
 package com.tdedsh.controller;
 
+import com.tdedsh.dto.CustomResponse;
 import com.tdedsh.generated.enums.TasksStatus;
 import com.tdedsh.generated.tables.records.TasksRecord;
 import io.javalin.http.Context;
@@ -23,7 +24,7 @@ public class TaskController {
             query.where(TASKS.STATUS.eq(TasksStatus.valueOf(status)));
         }
         var tasks = query.fetchInto(TasksRecord.class);
-        ctx.json(tasks);
+        ctx.json(new CustomResponse(200,tasks,"Success"));
     }
 
     // Get a single task by ID
@@ -33,9 +34,9 @@ public class TaskController {
                 .where(TASKS.ID.eq(taskId))
                 .fetchOneInto(TasksRecord.class);
         if (task != null) {
-            ctx.json(task);
+            ctx.json(new CustomResponse(200,task,"Success"));
         } else {
-            ctx.status(404).result("Task not found");
+            ctx.status(404).json(new CustomResponse(404,null,"Task not found"));
         }
     }
 
@@ -45,7 +46,7 @@ public class TaskController {
         db.insertInto(TASKS)
                 .set(task)
                 .execute();
-        ctx.status(201).result("Task created");
+        ctx.status(200).json(new CustomResponse(200,null,"Task created"));
     }
 
     // Update an existing task
@@ -56,7 +57,7 @@ public class TaskController {
                 .set(task)
                 .where(TASKS.ID.eq(taskId))
                 .execute();
-        ctx.result("Task updated");
+        ctx.status(200).json(new CustomResponse(200,null,"Task updated"));
     }
 
     // Delete a task
@@ -65,6 +66,6 @@ public class TaskController {
         db.deleteFrom(TASKS)
                 .where(TASKS.ID.eq(taskId))
                 .execute();
-        ctx.result("Task deleted");
+        ctx.status(200).json(new CustomResponse(200,null,"Task removed"));
     }
 }

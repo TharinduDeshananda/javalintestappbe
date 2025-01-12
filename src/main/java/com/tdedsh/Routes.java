@@ -32,6 +32,7 @@ public class Routes {
     }
     public static EndpointGroup authRoutes() {
         return () -> path("/auth", () -> {
+            post("/new", AuthController::create);
             post("/login", AuthController::loginUser);
             post("/logout",AuthController::logoutUser);
         });

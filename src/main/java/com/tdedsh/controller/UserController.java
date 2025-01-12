@@ -1,5 +1,6 @@
 package com.tdedsh.controller;
 
+import com.tdedsh.dto.CustomResponse;
 import com.tdedsh.dto.UserDto;
 import com.tdedsh.dto.mapper.UserMapper;
 import com.tdedsh.generated.tables.records.UsersRecord;
@@ -22,8 +23,9 @@ public class UserController {
 
     // Get all users
     public static void getAll(Context ctx) {
+        log.info("getAll called");
         var users = db.selectFrom(USERS).fetchInto(UsersRecord.class);
-        ctx.json(users.stream().map(UserMapper::toUserDTO).toList());
+        ctx.json(new CustomResponse(200,users.stream().map(UserMapper::toUserDTO).toList(),"Success"));
     }
 
     // Get a single user by ID
@@ -33,9 +35,9 @@ public class UserController {
                 .where(USERS.ID.eq(userId))
                 .fetchOneInto(UsersRecord.class);
         if (user != null) {
-            ctx.json(UserMapper.toUserDTO(user));
+            ctx.json(new CustomResponse(200,UserMapper.toUserDTO(user),"Success"));
         } else {
-            ctx.status(404).result("User not found");
+            ctx.status(404).json(new CustomResponse(404,null,"User not found"));
         }
     }
 
@@ -47,7 +49,7 @@ public class UserController {
         db.insertInto(USERS)
                 .set(usersRecord)
                 .execute();
-        ctx.status(201).result("User created");
+        ctx.status(200).json(new CustomResponse(200,null,"User created"));
     }
 
     // Update an existing user
@@ -59,7 +61,7 @@ public class UserController {
                 .set(usersRecord)
                 .where(USERS.ID.eq(userId))
                 .execute();
-        ctx.result("User updated");
+        ctx.json(new CustomResponse(200,null,"User updated"));;
     }
 
     // Delete a user
@@ -68,6 +70,6 @@ public class UserController {
         db.deleteFrom(USERS)
                 .where(USERS.ID.eq(userId))
                 .execute();
-        ctx.result("User deleted");
+        ctx.json(new CustomResponse(200,null,"User deleted"));;
     }
 }
