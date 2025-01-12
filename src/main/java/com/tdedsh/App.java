@@ -13,6 +13,7 @@ import static io.javalin.apibuilder.ApiBuilder.before;
 
 public class App {
     private static final Logger log = LoggerFactory.getLogger(App.class);
+
     public static void main(String[] args) {
         // Initialize the database connection
         DSLContext db = DatabaseConfig.create();
@@ -24,9 +25,20 @@ public class App {
         var app = Javalin.create(config -> {
             config.useVirtualThreads = true;
             config.http.asyncTimeout = 10_000L;
+            // CORS config
+            config.bundledPlugins.enableCors(cors -> {
+                cors.addRule(it -> {
+                    it.allowHost("http://localhost:5173");
+                    it.allowHost("localhost:5173");
+                    it.allowCredentials = true; // Allow credentials
+//                    it.allowedHeaders = List.of("Content-Type", "Authorization"); // Allowed headers
+//                    it.allowedMethods = List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"); // Allowed methods
+                });
+            });
             // Configure routes using apiBuilder
             config.router.apiBuilder(App::addRoutes);
         });
+        ExceptionMapper.mapExceptions(app);
 
         log.info("Starting server in 8080");
         app.start(8080);
@@ -35,12 +47,12 @@ public class App {
     private static void addRoutes() {
 
         var authMiddleware = new AuthMiddleware();
-        before("/tasks",authMiddleware);
-        before("/users",authMiddleware);
+        before("/tasks", authMiddleware);
+        before("/users", authMiddleware);
 
         // Add user routes
         var userRoutes = Routes.userRoutes();
-        var taskRoutes  = Routes.taskRoutes();
+        var taskRoutes = Routes.taskRoutes();
         var authRoutes = Routes.authRoutes();
 
 

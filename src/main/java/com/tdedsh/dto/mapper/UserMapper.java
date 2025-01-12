@@ -1,5 +1,6 @@
 package com.tdedsh.dto.mapper;
 
+import com.tdedsh.dto.CreateUserDto;
 import com.tdedsh.dto.UserDto;
 import com.tdedsh.generated.tables.records.UsersRecord;
 
@@ -21,6 +22,15 @@ public class UserMapper {
         record.setUsername(user.getUsername());
         record.setEmail(user.getEmail());
         record.setPasswordHash(user.getPasswordHash());
+        return record;
+    }
+
+    public static UsersRecord createDtoToUserRecord(CreateUserDto dto) {
+        UsersRecord record = new UsersRecord();
+        record.setId(0);
+        record.setUsername(dto.getUserName());
+        record.setEmail(dto.getEmail());
+        record.setPasswordHash(dto.getPassword());
         return record;
     }
 }
