@@ -6,10 +6,13 @@ import com.tdedsh.controller.UserController;
 import com.tdedsh.util.AuthMiddleware;
 import io.javalin.Javalin;
 import org.jooq.DSLContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static io.javalin.apibuilder.ApiBuilder.before;
 
 public class App {
+    private static final Logger log = LoggerFactory.getLogger(App.class);
     public static void main(String[] args) {
 
         // Initialize the database connection
@@ -26,6 +29,7 @@ public class App {
             config.router.apiBuilder(App::addRoutes);
         });
 
+        log.info("Starting server");
         app.start(8080);
     }
 
