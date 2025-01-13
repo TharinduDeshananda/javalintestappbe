@@ -1,9 +1,7 @@
 package com.tdedsh.dto.mapper;
 
 import com.tdedsh.dto.TaskDto;
-import com.tdedsh.dto.UserDto;
 import com.tdedsh.generated.tables.records.TasksRecord;
-import com.tdedsh.generated.tables.records.UsersRecord;
 
 public class TaskMapper {
     // Convert TasksRecord to Task DTO
@@ -15,7 +13,9 @@ public class TaskMapper {
                 record.getDescription(),
                 record.getStatus(),
                 record.getBackgroundColor(),
-                record.getTextColor()
+                record.getTextColor(),
+                record.getCreatedAt(),
+                record.getUpdatedAt()
         );
     }
 
@@ -31,4 +31,7 @@ public class TaskMapper {
         record.setTextColor(task.getTextColor());
         return record;
     }
+
+
+
 }
