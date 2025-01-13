@@ -18,10 +18,11 @@ public class TokenUtil {
 
     private static final long EXPIRATION_TIME = 86400000; // 24 hours in milliseconds
 
-    public static String generateToken(String email) {
+    public static String generateToken(int userId,String email) {
 
         return Jwts.builder()
                 .setSubject(email)
+                .claim("userId",userId)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SECRET_KEY)
                 .compact();

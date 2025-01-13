@@ -11,6 +11,8 @@ import org.jooq.exception.DataAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
+
 import static com.tdedsh.generated.tables.Users.USERS;
 
 public class AuthController {
@@ -44,7 +46,7 @@ public class AuthController {
         }
 
         // Generate JWT token
-        String token = TokenUtil.generateToken(loginDto.getUserName());
+        String token = TokenUtil.generateToken(user.getId(),loginDto.getUserName());
 
         // Set cookie with SameSite, Secure, and HttpOnly flags
         String cookieHeader = String.format(
@@ -79,6 +81,23 @@ public class AuthController {
             log.error(e.getMessage());
             throw e;
         }
+    }
+
+    public static UserDto getAuthenticatedUser(Context ctx){
+        String userEmail = (String)ctx.attribute("userEmail");
+        if(userEmail==null||userEmail.isBlank())return null;
+
+        UsersRecord usersRecord = db.selectFrom(USERS).where(USERS.EMAIL.eq(userEmail)).fetchOneInto(UsersRecord.class);
+        if(usersRecord==null)return null;
+        return UserMapper.toUserDTO(usersRecord);
+    }
+
+    public static String isAuthenticated(Context ctx){
+        return ctx.attribute("userEmail");
+    }
+
+    public static int getAuthernticatedUserId(Context ctx){
+        return Optional.ofNullable((Integer)ctx.attribute("userId")).orElse(0);
     }
 
 }

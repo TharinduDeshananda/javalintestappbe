@@ -29,12 +29,37 @@ public class TaskController {
     // Get all tasks (filtered by status if provided)
     public static void getAllTasksFiltered(Context ctx) {
         String status = ctx.queryParam("status"); // Optional query parameter
+        String pageStr = ctx.queryParam("page"); // Optional query parameter
+        String sizeStr = ctx.queryParam("size"); // Optional query parameter
+        String titleStr = ctx.queryParam("title"); // Optional query parameter
+
+        // Default values for pagination
+        int page = pageStr != null ? Integer.parseInt(pageStr) : 0; // Default to first page (0-based index)
+        int size = sizeStr != null ? Integer.parseInt(sizeStr) : 10; // Default to 10 items per page
+
         var query = db.selectFrom(TASKS);
+
+        // Apply status filter if provided
         if (status != null) {
             query.where(TASKS.STATUS.eq(TasksStatus.valueOf(status)));
         }
-        var tasks = query.fetchInto(TasksRecord.class).stream().map(TaskMapper::toTaskDTO).toList();
-        ctx.json(new CustomResponse(200,tasks,"Success"));
+
+        // Apply title filter if provided
+        if (titleStr != null) {
+            query.where(TASKS.TITLE.likeIgnoreCase("%" + titleStr + "%")); // Case-insensitive search
+        }
+
+        // Apply pagination
+        query.limit(size).offset(page * size);
+
+        // Fetch and map tasks to DTOs
+        var tasks = query.fetchInto(TasksRecord.class)
+                .stream()
+                .map(TaskMapper::toTaskDTO)
+                .toList();
+
+        // Return the response
+        ctx.json(new CustomResponse(200, tasks, "Success"));
     }
 
     // Get a single task by ID
@@ -56,16 +81,14 @@ public class TaskController {
         //get authenticated user
         var userEmail = (String)ctx.attribute("userEmail");
         if(userEmail==null|| userEmail.isBlank())throw new CustomException(401,"Unauthorized");
-        var user = db.selectFrom(Users.USERS)
-                .where(Users.USERS.EMAIL.eq(userEmail))
-                .fetchOneInto(UsersRecord.class);
-        if(user==null)throw new CustomException(401,"Unauthorized");
+        var userId = AuthController.getAuthernticatedUserId(ctx);
+        if(userId==0)throw new CustomException(401,"Unauthorized");
 
 
         var task = ctx.bodyAsClass(TaskDto.class);
 
         //set user id
-        task.setUserId(user.getId());
+        task.setUserId(userId);
 
         db.insertInto(TASKS)
                 .set(TaskMapper.toTasksRecord(task))

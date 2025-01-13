@@ -21,6 +21,7 @@ public class AuthMiddleware implements Handler {
             try {
                 Claims claims = TokenUtil.validateToken(token);
                 ctx.attribute("userEmail", claims.getSubject()); // Attach user email to the context
+                ctx.attribute("userId",claims.get("userId"));
             } catch (Exception e) {
                 log.warn("Invalid token", e);
                 ctx.status(401).json(new CustomResponse(401,null,"Unauthorized"));
