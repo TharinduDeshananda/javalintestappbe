@@ -28,6 +28,10 @@ public class TaskController {
 
     // Get all tasks (filtered by status if provided)
     public static void getAllTasksFiltered(Context ctx) {
+
+        var authenticatedUserId = AuthController.getAuthernticatedUserId(ctx);
+        if(authenticatedUserId==0)throw new CustomException(401,"Unauthorized");
+
         String status = ctx.queryParam("status"); // Optional query parameter
         String pageStr = ctx.queryParam("page"); // Optional query parameter
         String sizeStr = ctx.queryParam("size"); // Optional query parameter
@@ -38,6 +42,8 @@ public class TaskController {
         int size = sizeStr != null ? Integer.parseInt(sizeStr) : 10; // Default to 10 items per page
 
         var query = db.selectFrom(TASKS);
+
+        query.where(TASKS.USER_ID.eq(authenticatedUserId));
 
         // Apply status filter if provided
         if (status != null) {
@@ -64,9 +70,12 @@ public class TaskController {
 
     // Get a single task by ID
     public static void getSingleTask(Context ctx) {
+        var authenticatedUserId = AuthController.getAuthernticatedUserId(ctx);
+        if(authenticatedUserId==0)throw new CustomException(401,"Unauthorized");
+
         int taskId = Integer.parseInt(ctx.pathParam("taskId"));
         var task = db.selectFrom(TASKS)
-                .where(TASKS.ID.eq(taskId))
+                .where(TASKS.ID.eq(taskId).and(TASKS.USER_ID.eq(authenticatedUserId)))
                 .fetchOneInto(TasksRecord.class);
         if (task != null) {
             ctx.json(new CustomResponse(200,TaskMapper.toTaskDTO(task),"Success"));
@@ -99,21 +108,30 @@ public class TaskController {
     // Update an existing task
     public static void updateTask(Context ctx) {
 //        int taskId = Integer.parseInt(ctx.pathParam("taskId"));
+
+        var authenticatedUserId = AuthController.getAuthernticatedUserId(ctx);
+        if(authenticatedUserId==0)throw new CustomException(401,"Unauthorized");
+
+
         var task = ctx.bodyAsClass(TaskDto.class);
         int taskId = task.getId();
         if(taskId<=0)throw new CustomException(404,"Task not found");
         db.update(TASKS)
                 .set(TaskMapper.toTasksRecord(task))
-                .where(TASKS.ID.eq(taskId))
+                .where(TASKS.ID.eq(taskId).add(TASKS.USER_ID.eq(authenticatedUserId)))
                 .execute();
         ctx.status(200).json(new CustomResponse(200,null,"Task updated"));
     }
 
     // Delete a task
     public static void removeTask(Context ctx) {
+        var authenticatedUserId = AuthController.getAuthernticatedUserId(ctx);
+        if(authenticatedUserId==0)throw new CustomException(401,"Unauthorized");
+
+
         int taskId = Integer.parseInt(ctx.pathParam("taskId"));
         db.deleteFrom(TASKS)
-                .where(TASKS.ID.eq(taskId))
+                .where(TASKS.ID.eq(taskId).and(TASKS.USER_ID.eq(authenticatedUserId)))
                 .execute();
         ctx.status(200).json(new CustomResponse(200,null,"Task removed"));
     }
