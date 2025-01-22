@@ -72,8 +72,10 @@ public class App {
         });
 
         var authMiddleware = new AuthMiddleware();
-        before("/tasks", authMiddleware);
-        before("/users", authMiddleware);
+        before("/tasks/*", authMiddleware); // Matches /tasks and all sub-paths
+        before("/tasks", authMiddleware);   // Matches exactly /tasks
+        before("/users/*", authMiddleware); // Matches /users and all sub-paths
+        before("/users", authMiddleware);   // Matches exactly /users
 
         // Add user routes
         var userRoutes = Routes.userRoutes();

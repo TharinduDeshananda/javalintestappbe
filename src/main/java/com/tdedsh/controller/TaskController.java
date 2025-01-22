@@ -13,6 +13,8 @@ import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 import static com.tdedsh.generated.Tables.USERS;
 import static com.tdedsh.generated.tables.Tasks.TASKS;
 
@@ -116,9 +118,14 @@ public class TaskController {
         var task = ctx.bodyAsClass(TaskDto.class);
         int taskId = task.getId();
         if(taskId<=0)throw new CustomException(404,"Task not found");
+        var record = TaskMapper.toTasksRecord(task);
         db.update(TASKS)
-                .set(TaskMapper.toTasksRecord(task))
-                .where(TASKS.ID.eq(taskId).add(TASKS.USER_ID.eq(authenticatedUserId)))
+                .set(TASKS.TITLE,record.getTitle())
+                .set(TASKS.DESCRIPTION,record.getDescription())
+                .set(TASKS.STATUS,record.getStatus())
+                .set(TASKS.TEXT_COLOR,record.getTextColor())
+                .set(TASKS.BACKGROUND_COLOR,record.getBackgroundColor())
+                .where(TASKS.ID.eq(taskId).and(TASKS.USER_ID.eq(authenticatedUserId)))
                 .execute();
         ctx.status(200).json(new CustomResponse(200,null,"Task updated"));
     }
@@ -126,6 +133,7 @@ public class TaskController {
     // Delete a task
     public static void removeTask(Context ctx) {
         var authenticatedUserId = AuthController.getAuthernticatedUserId(ctx);
+        log.info("Remove Task: {}",authenticatedUserId);
         if(authenticatedUserId==0)throw new CustomException(401,"Unauthorized");
 
 

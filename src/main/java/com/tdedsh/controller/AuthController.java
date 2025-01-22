@@ -60,7 +60,7 @@ public class AuthController {
         ctx.header("Access-Control-Allow-Credentials", "true");
 
         // Return success response
-        ctx.json(new CustomResponse(200, null, "Login success"));
+        ctx.json(new CustomResponse(200, new UserDto(user.getId(),user.getUsername(),user.getEmail(),null), "Login success"));
     }
 
     public static void logoutUser(Context ctx){
